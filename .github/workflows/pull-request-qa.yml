@@ -82,3 +82,14 @@ jobs:
         run: |
           cd services/django-app
           flake8 .
+
+      - name: Run tests
+        run: |
+          cd services/django-app
+          pytest
+        env:
+          DATABASE_NAME: postgres
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: postgres
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
