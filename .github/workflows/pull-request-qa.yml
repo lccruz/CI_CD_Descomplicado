@@ -29,11 +29,14 @@ jobs:
           filters: |
             django:
               - 'services/django-app/**'
+            flask:
+              - 'services/flask-app/**'
 
       - name: Set output for changes
         id: set-output
         run: |
           echo "changes-django=${{ steps.check.outputs.django }}" >> $GITHUB_ENV
+          echo "changes-flask=${{ steps.check.outputs.flask }}" >> $GITHUB_ENV
 
   Django-App:
     runs-on: ubuntu-latest
