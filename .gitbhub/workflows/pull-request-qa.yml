@@ -1,7 +1,7 @@
 name: Pull Request QA
 
 on:
-  pull_request:
+  push:
     branches:
       - master
 
