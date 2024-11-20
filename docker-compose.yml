@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:15
+    container_name: descomplicado_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123123
+      POSTGRES_DB: descomplicado
+    volumes:
+      - postgres_django_data:/var/lib/postgresql/data
+    networks:
+      - global-network
+
+  app-django:
+    container_name: django_app
+    build:
+      context: ./services/django-app/
+      dockerfile: Dockerfile.dev
+    image: django_app:latest
+    #command: sleep 99999
+    volumes:
+      - ./services/django-app:/code
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./services/django-app/.env.dev
+    networks:
+      - global-network
+
+  app-django-flake8:
+    container_name: django_app_flake8
+    image: django_app:latest
+    build:
+      context: ./services/django-app/
+      dockerfile: Dockerfile.dev
+    command: flake8
+    volumes:
+      - ./services/django-app:/code
+    env_file:
+      - ./services/django-app/.env.test
+    networks:
+      - global-network
+
+networks:
+  global-network:
+
+volumes:
+  postgres_django_data:

@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+     migrations,
+     admin.py,
+     wsgi.py,
+     manage.py,
+max-complexity = 12
+max-line-length = 111
+max-doc-length = 111
+ignore = E203, E266, W503
