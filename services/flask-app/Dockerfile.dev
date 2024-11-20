@@ -1,0 +1,13 @@
+FROM python:3.12.4-slim
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+RUN mkdir /code
+WORKDIR /code
+
+COPY requirements.txt requirements-dev.txt /code/
+RUN pip install -r requirements.txt && pip install -r requirements-dev.txt
+COPY src /code/src
+
+CMD ["flask", "run", "--host=0.0.0.0", "--debug"]

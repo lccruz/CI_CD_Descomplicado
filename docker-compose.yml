@@ -29,6 +29,22 @@ services:
     networks:
       - global-network
 
+  app-django-test:
+    container_name: django_app__test
+    image: django_app:latest
+    build:
+      context: ./services/django-app/
+      dockerfile: Dockerfile.dev
+    command: pytest
+    volumes:
+      - ./services/django-app:/code
+    env_file:
+      - ./services/django-app/.env.test
+    depends_on:
+      - app-django
+    networks:
+      - global-network
+
   app-django-flake8:
     container_name: django_app_flake8
     image: django_app:latest
@@ -40,6 +56,47 @@ services:
       - ./services/django-app:/code
     env_file:
       - ./services/django-app/.env.test
+    networks:
+      - global-network
+
+  app-flask:
+    container_name: flask_app
+    build:
+      context: ./services/flask-app/
+      dockerfile: Dockerfile.dev
+    image: flask_app:latest
+    volumes:
+      - ./services/flask-app/:/code
+    ports:
+      - 8080:8080
+    env_file:
+      - ./services/flask-app/.env.dev
+    networks:
+      - global-network
+
+  app-flask-test:
+    container_name: flask_app_test
+    image: flask_app:latest
+    volumes:
+      - ./services/flask-app/:/code
+    command: pytest
+    env_file:
+      - ./services/flask-app/.env.test
+    depends_on:
+      - app-flask
+    networks:
+      - global-network
+
+  app-flask-flake8:
+    container_name: flask_app_flake8
+    image: flask_app:latest
+    volumes:
+      - ./services/flask-app/:/code
+    command: flake8
+    env_file:
+      - ./services/flask-app/.env.test
+    depends_on:
+      - app-flask
     networks:
       - global-network
 
