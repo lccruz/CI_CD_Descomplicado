@@ -64,6 +64,3 @@ jobs:
           service: ${{ vars.SERVICE }}
           region: ${{ vars.REGION }}
           image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}
-
-      - name: Overwrite output
-        run: echo "::set-output name=message::Logs!"
