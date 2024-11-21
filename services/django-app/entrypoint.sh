@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = "web" ]; then
-    gunicorn --bind :8000 --workers 1 --threads 8 --timeout 0 invista.wsgi:application
+    gunicorn --bind :8000 --workers 1 --threads 8 --timeout 0 cerrado.wsgi:application
 fi
 
 if [ "$1" = "migrate" ]; then
