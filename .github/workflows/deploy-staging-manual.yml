@@ -9,9 +9,6 @@ on:
         type: boolean
         default: false
 
-env:
-  PROJECT_ID: '${{ secrets.PROJECT_ID }}'
-  REGION: '${{ vars.REGION }}'
 
 jobs:
   Django-App:
@@ -19,11 +16,6 @@ jobs:
     name: Staging Deploy Django
     timeout-minutes: 15
     if: github.event.inputs.deploy_django == 'true' || github.event.inputs.django_migration == 'true'
-
-    env:
-      SERVICE: '${{ vars.SERVICE }}'
-      GAR_NAME: '${{ vars.GAR_NAME }}'
-      GCS_BUCKET: '${{ vars.GCS_BUCKET }}'
 
     steps:
       - name: Check out source repository
@@ -53,3 +45,13 @@ jobs:
           cd services/django-app
           python manage.py collectstatic --noinput
           gcloud storage rsync -r staticfiles gs://'${{ vars.GCS_BUCKET }}'/static
+
+      - name: Docker Auth
+        id: docker-auth
+        run: |-
+          gcloud auth configure-docker "${{ vars.GAR_LOCATION }}-docker.pkg.dev"
+
+      - name: Build and Push Container
+        run: |-
+          docker build -t "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}" ./services/django-app
+          docker push "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}"
