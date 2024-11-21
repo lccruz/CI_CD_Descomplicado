@@ -58,9 +58,12 @@ jobs:
 
       - name: Deploy to Cloud Run
         id: deploy
-        if: github.event.inputs.action == 'django'
+        if: github.event.inputs.deploy_django == 'true'
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: ${{ vars.SERVICE }}
           region: ${{ vars.REGION }}
           image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}
+
+      - name: Overwrite output
+        run: echo "::set-output name=message::Logs!"
