@@ -8,7 +8,16 @@ on:
         required: true
         type: boolean
         default: false
-
+      django_migration:
+        description: 'Run Django Migrations'
+        required: true
+        type: boolean
+        default: false
+      deploy_flask:
+        description: 'Deploy Flask App'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   Django-App:
@@ -64,3 +73,38 @@ jobs:
           service: ${{ vars.SERVICE }}
           region: ${{ vars.REGION }}
           image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}
+
+  Flask-App:
+    runs-on: ubuntu-latest
+    name: Staging Deploy Flask
+    timeout-minutes: 15
+    if: github.event.inputs.deploy_flask == 'true'
+
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: Docker Auth
+        id: docker-auth
+        run: |-
+          gcloud auth configure-docker "${{ vars.GAR_LOCATION }}-docker.pkg.dev"
+
+      - name: Build and Push Container
+        run: |-
+          docker build -t "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME_FLASK }}/${{ vars.SERVICEFLASK }}:${{ github.sha }}" ./services/flask-app
+          docker push "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME_FLASK }}/${{ vars.SERVICEFLASK }}:${{ github.sha }}"
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ vars.SERVICEFLASK }}
+          region: ${{ vars.REGION }}
+          image: ${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME_FLASK }}/${{ vars.SERVICEFLASK }}:${{ github.sha }}
+
