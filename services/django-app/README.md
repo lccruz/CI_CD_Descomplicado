@@ -1,3 +1,3 @@
 # django
 
-Deploy 1.1.5
+Deploy 1.1.6
