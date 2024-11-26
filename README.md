@@ -62,6 +62,12 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ---
 
+## Google Cloud Documentation
+
+- [Deploy to Cloud Run with GitHub Actions](https://cloud.google.com/blog/products/devops-sre/deploy-to-cloud-run-with-github-actions/)
+
+---
+
 ## Contributors
 - Luciano Camargo Cruz [lccruz](https://github.com/lccruz)
 - Davi Duarte [davifduarte](https://github.com/davifduarte)

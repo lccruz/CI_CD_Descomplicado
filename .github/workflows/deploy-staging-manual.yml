@@ -65,6 +65,19 @@ jobs:
           docker build -t "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}" ./services/django-app
           docker push "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}"
 
+      - name: Update Migrations Image
+        if: github.event.inputs.django_migration == 'true'
+        run: |
+          gcloud run jobs update ${{ vars.MIGRATION_JOB_NAME }} \
+            --image "${{ vars.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ vars.GAR_NAME }}/${{ vars.SERVICE }}:${{ github.sha }}" \
+            --region ${{ vars.REGION }}
+
+      - name: Run Database Migrations
+        if: github.event.inputs.django_migration == 'true'
+        run: |
+          gcloud run jobs execute ${{ vars.MIGRATION_JOB_NAME }} \
+            --region ${{ vars.REGION }} \
+
       - name: Deploy to Cloud Run
         id: deploy
         if: github.event.inputs.deploy_django == 'true'
