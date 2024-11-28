@@ -1,7 +1,7 @@
 def test_home_route(client):
     response = client.get('/api/')
     assert response.status_code == 200
-    assert response.json == {"data": "Welcome Plone and Cerrado Event !"}
+    assert response.json == {"data": "Welcome Plone and Cerrado Event 2024!"}
 
 
 def test_about_route(client):
