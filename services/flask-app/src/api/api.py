@@ -7,7 +7,7 @@ api_bp = Blueprint('api', __name__)
 def home() -> dict:
     """Home."""
     return {
-        "data": "Welcome to API Home Page!"
+        "data": "Welcome Plone and Cerrado Event !"
     }
 
 
